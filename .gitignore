@@ -1,0 +1,39 @@
+# System files
+.DS_Store
+Thumbs.db
+
+# Editor/IDE files
+*.swp
+*.swo
+.vscode/
+.idea/
+*.log
+
+# Compiled files
+*.pyc
+__pycache__/
+
+# Archives
+*.zip
+*.tar
+*.gz
+*.7z
+
+# Wazuh backups, keys, or sensitive overrides
+*.key
+*.crt
+*.pem
+*.db
+*.sqlite
+*.p12
+wazuh-backups/
+wazuh-logs/
+
+# Nextcloud or other integration logs (if stored locally)
+nextcloud.log
+*.log.*
+
+# Ansible/Puppet/automation
+*.retry
+inventory.ini
+secrets.yml
