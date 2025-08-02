@@ -50,9 +50,6 @@ This repository contains configuration files, custom rules, integration steps, a
 
 ---
 
-## 📁 Project Structure
-
----
 
 ## 🛡️ License
 
