@@ -4,16 +4,6 @@ This repository contains configuration files, custom rules, integration steps, a
 
 ---
 
-## 📦 Contents
-
-- `local_rules.xml` – Custom rules to suppress or escalate alerts
-- `wazuh-agent/` – Agent-side configuration snippets for Linux and Windows
-- `nextcloud_logs/` – Notes on parsing and forwarding Nextcloud logs
-- `filters/` – Saved Kibana/Discover queries for common use cases
-- `setup/` – Step-by-step setup documentation
-- `docs/` – Screenshots and walkthroughs for integrations (e.g. Filebeat, Fail2Ban)
-
----
 
 ## ⚙️ Setup Overview
 
