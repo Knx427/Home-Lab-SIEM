@@ -1,62 +1,89 @@
-# Wazuh Installation Guide (Ubuntu/Debian)
+### 🔐 Wazuh SIEM Component Installation & Core Configuration
 
-This guide outlines the steps to install Wazuh Manager, Indexer, Dashboard, and Filebeat on a single instance.
+This document outlines the procedural steps required to deploy a centralized **Wazuh Security Operations Center (SOC)** instance on a Debian/Ubuntu infrastructure. This implementation aggregates the Wazuh Manager, Indexer, Dashboard, and Filebeat data shipper onto a unified node. 
 
----
+### 1. Cryptographic Authentication & GPG Key Ingestion
 
-## 1. Import Wazuh GPG Key
-```
+Import the official Wazuh public GPG key to verify package signature integrity prior to system installation: 
+
+```bash
+
 curl -s https://packages.wazuh.com/key/GPG-KEY-WAZUH | sudo gpg --dearmor -o /usr/share/keyrings/wazuh.gpg
 ```
 
-### 2. Add Wazuh Repository
+
+### 2. Package Repository Provisioning
+
+Append the authenticated, stable Wazuh 4.x package repository channel to the local Advanced Package Tool (APT) sources matrix: 
+
 ```bash
+
 echo "deb [signed-by=/usr/share/keyrings/wazuh.gpg] https://packages.wazuh.com/4.x/apt/ stable main" | \
 sudo tee /etc/apt/sources.list.d/wazuh.list
 ```
 
-### 3. Update Package Lists
-```sudo apt update```
 
-### 4. Port Conflict Notice (Important)
-If your system already has another service running on port 443, edit the Wazuh installation YAML file to change the Dashboard port before installation.
-This will avoid conflicts with existing HTTPS services (That happened to me, a reinstallation was required).
+### 3. Local Ingestion Synchronization
 
-### 5. Install Wazuh Components
-```
-sudo apt install wazuh-manager wazuh-indexer wazuh-dashboard filebeat
-```
+Synchronize the local package index cache with the newly provisioned remote repository metadata: 
 
-### 6. Enable and Start Services
 ```bash
+
+sudo apt update
+```
+
+### 4. Architectural Engineering Warning: Layer 4 Port Conflicts
+
+[!WARNING]
+**Network Interface Conflict Handling (Port 443 / HTTPS):**
+If the deployment target system hosts pre-existing web services or infrastructure assets (e.g., Nextcloud, Apache, Nginx) binding to default TLS/HTTPS **Port 443**, the wazuh-dashboard initialization will fail. 
+
+*Mitigation Protocol:* Prior to execution, the installation orchestration YAML configuration must be edited to re-bind the Wazuh Web Dashboard service interface to a non-standard alternative ingress port to prevent socket binding collisions. 
+
+### 5. Security Component Orchestration & Installation
+
+Install the full security information and event management (SIEM) architecture stack natively via the package manager: 
+
+```bash
+
+sudo apt install -y wazuh-manager wazuh-indexer wazuh-dashboard filebeat
+```
+
+### 6. Service Initialization & Daemon Management
+
+Reload the systemd manager configuration to capture binary updates, enable persistent boot states, and initialize all SIEM daemons sequentially: 
+
+```bash
+
+# Reload system systemd configuration
 sudo systemctl daemon-reload
 
-sudo systemctl enable wazuh-dashboard
-sudo systemctl start wazuh-dashboard
+# Enable and spin up data ingestion and storage backend
+sudo systemctl enable --now wazuh-indexer
+sudo systemctl enable --now wazuh-manager
 
-sudo systemctl enable wazuh-manager
-sudo systemctl start wazuh-manager
-
-sudo systemctl enable wazuh-indexer
-sudo systemctl start wazuh-indexer
-
-sudo systemctl enable filebeat
-sudo systemctl start filebeat
+# Enable and spin up log broker and web management interface
+sudo systemctl enable --now filebeat
+sudo systemctl enable --now wazuh-dashboard
 ```
 
-### 7. Verify Services Are Running
+### 7. Verification & Telemetry Audit
+
+Validate the active operational socket runtime status of each distinct sub-component service layer: 
+
 ```bash
-sudo systemctl status wazuh-manager
-sudo systemctl status wazuh-indexer
-sudo systemctl status wazuh-dashboard
-sudo systemctl status filebeat
+
+sudo systemctl status wazuh-indexer --no-pager
+sudo systemctl status wazuh-manager --no-pager
+sudo systemctl status filebeat --no-pager
+sudo systemctl status wazuh-dashboard --no-pager
 ```
 
-### 8. Wazuh Manager Self-Monitoring
-The Wazuh Manager automatically monitors the host it runs on using internal modules.
-No agent installation is required on the same machine.
+### 8. Host Security Loopback & Self-Monitoring
 
----
-### Next Steps:
-- Setup Agent. 
-- Config Rules / Logs. 
+The Wazuh Manager daemon automatically hooks into local system event loops using native internal telemetry modules. Consequently, explicit loopback host agent deployment is omitted on the primary master infrastructure node. 
+
+### 🚀 Post-Deployment Engineering Tasks
+
+* [ Provision and Link Endpoint Monitoring Agents ](agent-setup.md)
+* [ Refine Rule Classifications & Custom Log Parsers ](ossec-config.md)
