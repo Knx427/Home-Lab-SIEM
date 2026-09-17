@@ -70,13 +70,9 @@ When committing modifications to system decoders, configuration blocks, or custo
 sudo systemctl restart wazuh-manager
 ```
 
-### 🛡️ License
+---
+## ✍️ Author
+Created and maintained by **knx427**  
+_Network Technician | Cybersecurity Infrastructure & Monitoring Specialist_  
 
-This security project is licensed under the terms of the MIT License. See the [LICENSE](./LICENSE) descriptor for more details. 
-
-### ✍️ Incident Management & Author Credits
-
-Maintained and engineered by **Knx427**
-*Network Technician | Infrastructure Hardening & Continuous Monitoring Specialist* 
-
-📫 *Technical discussions, suggestions, and collaborative security engineering contributions are welcome.*
+📫 *Contributions, suggestions, or technical discussions are always welcome!*
